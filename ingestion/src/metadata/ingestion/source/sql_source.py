@@ -102,7 +102,19 @@ class SQLConnectionConfig(ConfigModel):
         url += f"{self.host_port}"
         if self.database:
             url += f"/{self.database}"
-        logger.info(url)
+        if self.options:
+            url = self.get_options(options=self.options, url=url)
+
+        logger.debug(url)
+        return url
+
+    def get_options(self, options, url):
+        if options:
+            url += "?" if "?" not in url else ""
+            for key, value in options.items():
+                if url[-1] != "?":
+                    url += "&"
+                url += f"{key}={value}"
         return url
 
     def get_service_type(self) -> DatabaseServiceType:
@@ -137,7 +149,7 @@ class SQLSource(Source):
         self.status = SQLSourceStatus()
         self.sql_config = self.config
         self.connection_string = self.sql_config.get_connection_url()
-        self.engine = create_engine(self.connection_string, **self.sql_config.options)
+        self.engine = create_engine(self.connection_string)
         self.connection = self.engine.connect()
         self.data_profiler = None
 

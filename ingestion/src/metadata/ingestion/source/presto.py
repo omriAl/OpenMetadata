@@ -32,6 +32,8 @@ class PrestoConfig(SQLConnectionConfig):
         url += f"{self.host_port}"
         if self.database:
             url += f"?schema={quote_plus(self.database)}"
+        if self.options:
+            url = self.get_options(options=self.options, url=url)
         return url
 
 

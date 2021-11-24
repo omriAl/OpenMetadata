@@ -28,15 +28,18 @@ class TrinoConfig(SQLConnectionConfig):
 
     def get_connection_url(self):
         url = f"{self.scheme}://"
-        if self.username:
-            url += f"{quote_plus(self.username)}"
-            if self.password:
-                url += f":{quote_plus(self.password)}"
         url += f"{self.host_port}"
         if self.catalog:
             url += f"/{quote_plus(self.catalog)}"
             if self.schema_name:
                 url += f"/{quote_plus(self.schema_name)}"
+        if self.username:
+            url += f"?user={quote_plus(self.username)}"
+            if self.password:
+                url += f"&password={quote_plus(self.password)}"
+        if self.options:
+            url = self.get_options(options=self.options, url=url)
+        print(url)
         return url
 
 
