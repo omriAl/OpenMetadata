@@ -27,8 +27,7 @@ class TrinoConfig(SQLConnectionConfig):
     schema_name: Optional[str]
 
     def get_connection_url(self):
-        url = f"{self.scheme}://"
-        url += f"{self.host_port}"
+        url = f"{self.scheme}://{self.host_port}"
         if self.catalog:
             url += f"/{quote_plus(self.catalog)}"
             if self.schema_name:
@@ -39,7 +38,6 @@ class TrinoConfig(SQLConnectionConfig):
                 url += f"&password={quote_plus(self.password)}"
         if self.options:
             url = self.get_options(options=self.options, url=url)
-        print(url)
         return url
 
 
